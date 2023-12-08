@@ -10,13 +10,13 @@ Title: Different Types of Numerical Methods for Time Stepping
 - [ODEs and IVPs](#ODEs-and-IVPs)
 - [Euler's Methods](#Euler's-Methods)
 - [Runge-Kutta Methods](#Runge-Kutta)
-- [PDEs](#PDEs)
+- [Multistep Methods](#Multistep-Methods)
 - [References](#References)
 
 ## Background
-Time Stepping refers to the practice of nuemrically estimating solutions to differential equations by using small increments of the function input. The outpus of those functions are then calculated using different methods ascribed below.
+Time Stepping refers to the practice of nuemrically estimating solutions to differential equations by using small increments of the function input. The outputs of those functions are then calculated using different methods ascribed below.
 
-These approximations have been developed and used for quite some time, since the invention of Calculus by the likes of Newton and Leibniz. Following them, Taylor published the first study of difference equations, and then Euler developed his methods for solving IVPs in 1768. Later on, Cauchy refined his methods in 1840, and Adams published his multistep methods in 1883, and Runge, Heun, and Kutta developed the Runge-Kutta methods at the turn of the 19th century. [3]
+These approximations have been developed and used for quite some time, since the invention of Calculus by the likes of [Newton](https://en.wikipedia.org/wiki/Isaac_Newton) and [Leibniz](https://en.wikipedia.org/wiki/Gottfried_Wilhelm_Leibniz). Following them, [Taylor](https://en.wikipedia.org/wiki/Brook_Taylor) published the first study of difference equations, and then [Euler](https://en.wikipedia.org/wiki/Leonhard_Euler) developed his methods for solving IVPs in 1768. Later on, [Cauchy](https://en.wikipedia.org/wiki/Augustin-Louis_Cauchy) refined his methods in 1840, and Adams published his multistep methods in 1883, and [Runge](https://en.wikipedia.org/wiki/Carl_Runge), [Heun](https://en.wikipedia.org/wiki/Karl_Heun), and [Kutta](https://en.wikipedia.org/wiki/Martin_Kutta) developed the Runge-Kutta methods at the turn of the 19th century. [3]
 
 
 ## ODEs and IVPs
@@ -110,13 +110,20 @@ Thus, any Runge-Kutta Method can be represented by the number of stages $n$, and
 
 ![](RK_Table.png)
 
-The following tables represent the 2nd order Improved Euler's Method (Heun's Method), and also the classic 4th Order Runge-Kutta Method. See [here](https://en.wikipedia.org/wiki/List_of_Runge%E2%80%93Kutta_methods) for more RK methods.
+The following tables represent the 2nd order Improved Euler's Method (Heun's Method), and below it is also the classic 4th Order Runge-Kutta Method. See [here](https://en.wikipedia.org/wiki/List_of_Runge%E2%80%93Kutta_methods) for more RK methods.
+
 ![](Heun's.png)
+
 ![](Classic_RK.png)
 
-## Multi-Step Methods
+There is also a way for Runge-Kutta methods to automatically adjust step size according to the size of the derivative, which you can see in any of the resources below.
 
-## PDEs
+## Multistep Methods
+All of the methods we've explored above are single-step methods. They only look at the current values to predict the next ones, i.e. $t_k, y_k \rightarrow y_{k+1}$. Runge-Kutta Methods are multistage methods because they take multiple rounds of calculations for each step, but each step itself is only single. The standard form for multistep methods is the following [2]:
+$$\sum_{j=0}^k \alpha_j y_{n+1-j} = \Delta t \sum_{j=0}^k \beta_jf(t_{n+1-j}, y_{n+1-j}) + \tau_n$$
+This standard form can develop into different methods including the [Adams](https://en.wikipedia.org/wiki/Linear_multistep_method#Adams%E2%80%93Bashforth_methods) and [BDF (Backward Differentiation Formula)](https://en.wikipedia.org/wiki/Linear_multistep_method#Backward_differentiation_formulas_(BDF)) methods.
+
+Further discussion on how these methods are derived and how they work is outside the scope of this article, but overall they exist to work in conjunction with single-step methods in order to reduce error as much as possible. While single-step methods rely on using more and more terms from the Taylor series to increase the accuracy of the model, multi-step models instead use the history of the solution by taking information from previous time steps and applying it to inform the possible value of $y(t + h)$ [1].
 
 ## References
 
