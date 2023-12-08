@@ -3,7 +3,7 @@ Name: Mark Glinberg
 Topic: 32
 Title: Different Types of Numerical Methods for Time Stepping
 ---
-# Time Stepping
+# Time Stepping Methods
 
 ## Table of Contents
 - [Background](#Background)
@@ -76,7 +76,43 @@ Overall, while implicit methods are costlier to compute for every iteration, the
 ![](Implicit_Explicit.png)
 
 ## Runge-Kutta
+As discussed earlier, one direct way to improve the accuracy of Euler's Methods would be to add more terms from the Taylor series, but that would greatly increaase the computational cost and be difficult to calculate the resulting derivatives of $f$. However, we can get around that. Consider the Taylor series again:
+$$y_{k+1} = y_{k} + hy_{k}' + \frac{1}{2}h^2y_{h}'' + \mathcal{O}(h^3)$$
+Since $y'(t) = f(t, y(t))$ from our original equation, that means $y''(t) = f'(t, y(t))$. As such:
+$$y''(t) = f'(t, y(t)) = \frac{df}{dt} = \frac{\partial f}{\partial t} + \frac{\partial f}{\partial y} \frac{dy}{dt} = f_t + f_yf$$
+After applying the [chain rule](https://en.wikipedia.org/wiki/Chain_rule), we can then plug that result back in to get:
+$$y_{k+1} = y_{k} + hf(t_k, y_k) + \frac{1}{2}h^2[f_t(t_k, y_k) + f_y(t_k, y_k)f(t_k, y_k)] + \mathcal{O}(h^3)$$
+$$= y_{k} + h[f(t_k, y_k) + \frac{h}{2}f_t(t_k, y_k) + \frac{h}{2}f_y(t_k, y_k)f(t_k, y_k)] + \mathcal{O}(h^3)$$
+However, we still don't want to compute those partial derivatives: $f_t$ and $f_y$. Instead, we can apply the same Taylor Series concept now to $f$:
+$$f(t + \alpha, y(t) + \beta) = f(t, y(t)) + \alpha f_t(t, y(t)) + \beta f_y(t, y(t)) + \mathcal{O}((\alpha + \beta)^2)$$
+If we set $\alpha = \frac{h}{2}$ and $\beta = \frac{h}{2}f(t, y(t))$, we can substitute the above result into the original taylor series equation:
+$$y_{k+1}= y_{k} + h[f(t + \alpha, y(t) + \beta)] + \mathcal{O}(h^3)$$
+$$= y_{k} + hf(t_k + \frac{h}{2}, y_k + \frac{h}{2}f(t_k, y_k)) + \mathcal{O}(h(\alpha + \beta)^2 + h^3)$$
+We can then truncate this to get the Improved Euler Method, which is the basis for the Runge-Kutte group of methods. Since $\alpha$ and $\beta$ are both defined in terms of $h$, we get the nice reduction: $\mathcal{O}(h(\alpha + \beta)^2 + h^3) = \mathcal{O}(h^3)$. This in turn means that the order of accuracy of this method is 2, and can be referred to IE2 [1]:
+$$y_{k+1} = y_{k} + hf(t_k + \frac{h}{2}, y_k + \frac{h}{2}f(t_k, y_k))
 
+### Multistage Methods
+Runge-Kutta Methods are considered mutigstage methods, which means that for every step, we have multiple stages of calculations. In Improved Euler's Method, we have the first stage which takes the step from $t_k$ to $t_k + \frac{h}{2}$:
+$$s_1 = hf(t_k, y_k)$$
+$$v = y_k + \frac{s_1}{2}$$
+Then we can do the second stage:
+$$s_2 = hf(t_k + \frac{h}{2}, v)$$
+$$y_{k+1} = y_k + s_2$$
+
+We can generalize this to match Taylor expansions to higher orders of accuracy. While the [derivation](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods) of these methods is outside the scope of this article, we can generalize to $n$ stages:
+$$s_1 = hf(t_k, y_k)$$
+$$s_2 = hf(t_k + c_1h, y_k + a_{11}k_1)$$
+$$s_3 = hf(t_k + c_2h, y_k + a_{21}k_1 + a_{22}k_2)$$
+$$...$$
+$$s_n = hf(t_k + c_{n-1}h, y_k + a_{n-1,1}s_1 + ... + a_{n-1,n-1}s_{n-1})$$
+$$y_{k+1} = y_k + b_1s_1 + ... b_ns_n \quad \quad  \text{[1]}$$
+Thus, any Runge-Kutta Method can be represented by the number of stages $n$, and whatever the constants $a_{ij}, b_j, c_i$ are. These constants are often represented in Butcher tables like the following:
+
+![](RK_Table.png)
+
+The following tables represent the 2nd order Improved Euler's Method (Heun's Method), and also the classic 4th Order Runge-Kutta Method. See [here](https://en.wikipedia.org/wiki/List_of_Runge%E2%80%93Kutta_methods) for more RK methods.
+![](Heun's.png)
+![](Classic_RK.png)
 
 ## Multi-Step Methods
 
